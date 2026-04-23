@@ -11,4 +11,12 @@ import org.hibernate.validator.constraints.UniqueElements;
 public class Wallet {
     @Id
     private String id;
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getId() {
+        return id;
+    }
 }
