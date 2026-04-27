@@ -1,6 +1,7 @@
 package com.example.simplifiedstockmarket;
 
 import com.example.simplifiedstockmarket.model.Wallet;
+import com.example.simplifiedstockmarket.repository.WalletRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;

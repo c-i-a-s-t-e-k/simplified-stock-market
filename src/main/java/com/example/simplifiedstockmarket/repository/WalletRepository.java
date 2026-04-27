@@ -1,4 +1,4 @@
-package com.example.simplifiedstockmarket;
+package com.example.simplifiedstockmarket.repository;
 
 import com.example.simplifiedstockmarket.model.Wallet;
 import org.springframework.data.jpa.repository.JpaRepository;
