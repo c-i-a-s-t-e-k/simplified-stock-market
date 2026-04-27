@@ -1,9 +1,12 @@
 package com.example.simplifiedstockmarket.controller;
 
+import com.example.simplifiedstockmarket.controller.dto.LogListDto;
 import com.example.simplifiedstockmarket.controller.dto.StockStatusRequest;
 import com.example.simplifiedstockmarket.service.BankService;
+import jakarta.validation.Valid;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -16,21 +19,23 @@ public class BankController {
 
     @GetMapping("/stocks")
     public ResponseEntity<?> getBankStatus(){
-        return bankService.getStatus();
+        return ResponseEntity.ok(new StockStatusRequest(bankService.getStatus()));
     }
 
     @PostMapping("/stocks")
-    public ResponseEntity<?> setBankStatus(@RequestBody StockStatusRequest request){
-        return null;
+    public ResponseEntity<?> setBankStatus(@Valid @RequestBody StockStatusRequest request){
+        bankService.setStatus(request.getStocks());
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/log")
     public ResponseEntity<?> getLog(){
-        return null;
+        return ResponseEntity.ok(new LogListDto(bankService.getLogs()));
     }
 
     @PostMapping("/chaos")
     public ResponseEntity<?> shutdownInstance(){
-        return null;
+        bankService.shutdownInstance();
+        return ResponseEntity.ok().build();
     }
 }

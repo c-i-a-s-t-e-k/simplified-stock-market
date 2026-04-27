@@ -1,9 +1,6 @@
 package com.example.simplifiedstockmarket.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -15,6 +12,7 @@ import org.hibernate.validator.constraints.UniqueElements;
 @Entity
 public class Stock {
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
     @Column(unique = true)
