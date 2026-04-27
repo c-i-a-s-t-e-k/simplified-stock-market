@@ -1,16 +1,22 @@
 package com.example.simplifiedstockmarket.controller;
 
 import com.example.simplifiedstockmarket.controller.dto.StockStatusRequest;
+import com.example.simplifiedstockmarket.service.BankService;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class BankController {
+    BankService bankService;
+
+    public BankController(BankService service){
+        this.bankService = service;
+    }
 
     @GetMapping("/stocks")
     public ResponseEntity<?> getBankStatus(){
-        return null;
+        return bankService.getStatus();
     }
 
     @PostMapping("/stocks")
