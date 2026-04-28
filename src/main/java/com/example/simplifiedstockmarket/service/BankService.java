@@ -3,6 +3,7 @@ package com.example.simplifiedstockmarket.service;
 import com.example.simplifiedstockmarket.controller.dto.LogDto;
 import com.example.simplifiedstockmarket.controller.dto.OperationType;
 import com.example.simplifiedstockmarket.controller.dto.StockDto;
+import com.example.simplifiedstockmarket.exeptions.InsufficientStockException;
 import com.example.simplifiedstockmarket.mapper.StockMapper;
 import com.example.simplifiedstockmarket.model.Log;
 import com.example.simplifiedstockmarket.model.Stock;
@@ -71,6 +72,7 @@ public class BankService {
         operativeStock.setQuantity_in_bank(
                 operativeStock.getQuantity_in_bank() + this.valueChangeByType(type)
         );
+        if(operativeStock.getQuantity_in_bank() < 0) throw new InsufficientStockException("No stock in bank");
         stockRepository.save(operativeStock);
     }
 

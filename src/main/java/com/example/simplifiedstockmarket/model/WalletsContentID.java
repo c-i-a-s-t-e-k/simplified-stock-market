@@ -26,6 +26,15 @@ public class WalletsContentID implements Serializable {
         this.stockId = stockId;
     }
 
+    public WalletsContentID(Wallet wallet, Stock stock){
+        this.stockId = stock.getId();
+        this.walletId = wallet.getId();
+    }
+    public WalletsContentID(String walletId, String stockId){
+        this.stockId = stockId;
+        this.walletId = walletId;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if(obj instanceof WalletsContentID){

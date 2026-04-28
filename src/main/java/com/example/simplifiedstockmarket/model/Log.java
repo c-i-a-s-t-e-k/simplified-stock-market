@@ -6,6 +6,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
 
+import java.util.UUID;
+
 @Entity
 public class Log {
     @Id
@@ -20,4 +22,11 @@ public class Log {
 
     @NotNull
     private String stock_name;
+
+    public Log(UUID id, String walletId, String stockName, LogType type){
+        this.id = id.toString();
+        this.wallet_id = walletId;
+        this.stock_name = stockName;
+        this.type = type;
+    }
 }
