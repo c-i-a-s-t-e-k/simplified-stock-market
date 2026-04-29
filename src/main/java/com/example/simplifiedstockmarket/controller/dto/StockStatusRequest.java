@@ -15,4 +15,5 @@ public class StockStatusRequest {
     public StockStatusRequest(List<StockDto> list){
         this.stocks = list;
     }
+    public StockStatusRequest(){}
 }

@@ -13,4 +13,11 @@ public class StockDto {
     private String name;
     @Min(0)
     private int quantity;
+
+    public StockDto(){}
+
+    public StockDto(String name, int quantity){
+        this.name = name;
+        this.quantity = quantity;
+    }
 }

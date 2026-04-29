@@ -5,10 +5,12 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
+import lombok.Data;
 
 import java.util.UUID;
 
 @Entity
+@Data
 public class Log {
     @Id
     private String id;
@@ -29,4 +31,5 @@ public class Log {
         this.stock_name = stockName;
         this.type = type;
     }
+    public Log(){}
 }

@@ -1,8 +1,11 @@
 package com.example.simplifiedstockmarket.service;
 
 import com.example.simplifiedstockmarket.controller.dto.OperationType;
+import com.example.simplifiedstockmarket.controller.dto.StockDto;
+import com.example.simplifiedstockmarket.controller.dto.WalletStatusDto;
 import com.example.simplifiedstockmarket.exeptions.InsufficientStockException;
 import com.example.simplifiedstockmarket.exeptions.StockNotFoundException;
+import com.example.simplifiedstockmarket.exeptions.WalletNotFoundException;
 import com.example.simplifiedstockmarket.model.Stock;
 import com.example.simplifiedstockmarket.model.Wallet;
 import com.example.simplifiedstockmarket.model.WalletsContent;
@@ -13,6 +16,9 @@ import com.example.simplifiedstockmarket.repository.WalletRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class WalletService {
@@ -52,7 +58,7 @@ public class WalletService {
     }
 
     private WalletsContent newWalletContent(Wallet wallet, Stock stock){
-        return new WalletsContent(0, wallet.getId(), stock.getId());
+        return new WalletsContent(0, wallet, stock);
     }
 
     public void executeOperationWithLog(OperationType type, String walletId, String stockName){
@@ -74,5 +80,40 @@ public class WalletService {
         bankService.WalletOperation(stock.getId(), type);
 
         walletContentRepository.save(content);
+    }
+
+    private List<StockDto> getWalletStocks(String walletId){
+        List<WalletsContent> walletsContent = walletContentRepository.findByWalletId(walletId);
+        List<StockDto> stocks = new ArrayList<>();
+        for(WalletsContent content: walletsContent){
+            stocks.add(new StockDto(content.getStock().getName(), content.getQuantity_in_wallet()));
+        }
+        return stocks;
+    }
+
+    private boolean isWalletExist(String walletId){
+        return walletRepository.existsById(walletId);
+    }
+
+
+
+    @Transactional
+    public WalletStatusDto getWalletStatus(String walletId){
+        if(!this.isWalletExist(walletId)) throw new WalletNotFoundException("Wallet of id " + walletId +" not found." );
+
+        WalletStatusDto walletStatusDto = new WalletStatusDto();
+        walletStatusDto.setId(walletId);
+        walletStatusDto.setStocks(getWalletStocks(walletId));
+        return walletStatusDto;
+    }
+
+    @Transactional
+    public int getStockQuantityInWallet(String walletId, String stockName){
+        Stock stock = stockRepository.findByName(stockName)
+                .orElseThrow(() -> new StockNotFoundException("Stock of name " + stockName + " do not exist."));
+        WalletsContent content = walletContentRepository.findById(new WalletsContentID(walletId, stock.getId()))
+                .orElse(null);
+        if(content == null) return 0;
+        return content.getQuantity_in_wallet();
     }
 }

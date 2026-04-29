@@ -1,6 +1,7 @@
 package com.example.simplifiedstockmarket.model;
 
 import jakarta.persistence.Embeddable;
+import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -34,6 +35,7 @@ public class WalletsContentID implements Serializable {
         this.stockId = stockId;
         this.walletId = walletId;
     }
+    public WalletsContentID(){}
 
     @Override
     public boolean equals(Object obj) {
