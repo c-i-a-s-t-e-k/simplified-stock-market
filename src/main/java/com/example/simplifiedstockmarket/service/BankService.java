@@ -4,10 +4,12 @@ import com.example.simplifiedstockmarket.controller.dto.LogDto;
 import com.example.simplifiedstockmarket.controller.dto.OperationType;
 import com.example.simplifiedstockmarket.controller.dto.StockDto;
 import com.example.simplifiedstockmarket.exeptions.InsufficientStockException;
+import com.example.simplifiedstockmarket.exeptions.StockInUseException;
 import com.example.simplifiedstockmarket.mapper.StockMapper;
 import com.example.simplifiedstockmarket.model.Log;
 import com.example.simplifiedstockmarket.model.Stock;
 import com.example.simplifiedstockmarket.repository.StockRepository;
+import com.example.simplifiedstockmarket.repository.WalletContentRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.context.ApplicationContext;
@@ -16,6 +18,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static java.util.Arrays.stream;
@@ -26,14 +29,17 @@ public class BankService {
     private final StockRepository stockRepository;
     private final AuditService auditService;
     private final StockMapper stockMapper;
+    private final WalletContentRepository walletContentRepository;
 
     public BankService(
             ApplicationContext context,
             StockRepository repository,
             AuditService auditService,
-            StockMapper stockMapper
+            StockMapper stockMapper,
+            WalletContentRepository walletContentRepository
     ){
         this.stockRepository = repository;
+        this.walletContentRepository = walletContentRepository;
         this.context = context;
         this.auditService = auditService;
         this.stockMapper = stockMapper;
@@ -48,13 +54,18 @@ public class BankService {
 
     @Transactional
     public void setStatus(List<StockDto> status){
-        stockRepository.deleteAll();
-        stockRepository.flush();
-        stockRepository.saveAll(
-                status.stream()
+        walletContentRepository.clearWalletsContent();
+        Set<Stock> newStatus = status
+                        .stream()
                         .map(stockMapper::toEntity)
-                        .collect(Collectors.toList())
-        );
+                        .collect(Collectors.toSet());
+        Set<Stock> stocksInUse = walletContentRepository.findAllUsedStocks();
+        if (!newStatus.containsAll(stocksInUse))
+            throw new StockInUseException("Invalid bank status, some wallets using non-existing stock");
+
+        stockRepository.deleteAllNotIn(stocksInUse);
+        stockRepository.flush();
+        newStatus.forEach(stockRepository::upsert);
     }
 
     private int valueChangeByType(OperationType type){

@@ -1,6 +1,7 @@
 package com.example.simplifiedstockmarket.controller;
 
 import com.example.simplifiedstockmarket.exeptions.InsufficientStockException;
+import com.example.simplifiedstockmarket.exeptions.StockInUseException;
 import com.example.simplifiedstockmarket.exeptions.StockNotFoundException;
 import com.example.simplifiedstockmarket.exeptions.WalletNotFoundException;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(WalletNotFoundException.class)
     public ResponseEntity<?> handleWalletNotFound(WalletNotFoundException e) {
         return ResponseEntity.notFound().build();
+    }
+
+    @ExceptionHandler(StockInUseException.class)
+    public ResponseEntity<?> handleStockInUse(StockInUseException e){
+        return ResponseEntity.badRequest().body(e.getMessage());
     }
 }
 

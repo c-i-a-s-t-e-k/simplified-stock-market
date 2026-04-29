@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.UniqueElements;
 
+import java.util.Objects;
+
 @Data
 @Entity
 public class Stock {
@@ -21,4 +23,12 @@ public class Stock {
 
     @Min(0)
     private int quantity_in_bank;
+
+    public boolean equals(Object other){
+        if (!(other instanceof Stock otherStock)) return false;
+        return otherStock.name.equals(this.name);
+    }
+    public int hashCode(){
+        return Objects.hash(name);
+    }
 }
