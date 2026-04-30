@@ -1,22 +1,20 @@
 # simplified-stock-market
 
-The project implements task described in /doc/task_for)intership_2026.md, the main goal is implement the 
-concurency resilient system witch bank and stocks wich can be bought by wallets, there is simple fluidy.
-If you need more technical info about the project go to ./TECHNICAL.md
+The project implements the task described in [doc/task_for_intership_2026.md](doc/task_for_intership_2026.md). The main goal is to implement a concurrency-resilient system with a bank and stocks that can be bought by wallets, with simple liquidity flow.
+
+If you need more technical information about the project, see [TECHNICAL.md](TECHNICAL.md).
 
 ## Setup and start
 
-to run project there will be needed to have docker and avaiable internet connetion do dowaland all needed 
-java dependencies and postgressqlo database docker image.
+To run the project you will need Docker and an available internet connection to download all required Java dependencies and the PostgreSQL database Docker image.
 
-build and run apps you go with 
+To build and run the app:
 ```bash
 chmod +x ./build_and_run.sh
-./build_and_run.sh 8081 8082 8083 #number of ports, 1 port = 1 app instance
+./build_and_run.sh 8081 8082 8083 # number of ports — 1 port = 1 app instance
 ```
 
-if already builded you can get a fresh envoirement wich commands this commands will work on conteiners created
-with build so if you wanna set-up diffren number of istances then you nned to remove this envoriment and then buld another.:
+If already built, you can get a fresh environment with the following commands. Note: these commands work only on containers created with the build script. If you want to set up a different number of instances, you need to remove the current environment first and then build again.
 ```bash
 chmod +x ./start.sh
 chmod +x ./stop.sh
@@ -25,19 +23,20 @@ chmod +x ./stop.sh
 ./start.sh
 ```
 
-to remove cointeiners and clean-up you use remove.sh
+To remove containers and clean up:
 ```bash
 chmod +x ./remove.sh
 ./remove.sh
 ```
 
-## Rest Server
-app have avaiable endpoints api as specyfied in /doc/task_for)intership_2026.md, adiitionali its avaiable to get OpenAPI documetion at endpoints
-```txt
-/swagger-ui/index.html # human redable api endpoints doc
-v3/api-docs # json containing all avaiable api
-v3/api-docs.yaml # as above but its .yaml file
+## REST Server
+
+The app exposes API endpoints as specified in [doc/task_for_intership_2026.md](doc/task_for_intership_2026.md). Additionally, OpenAPI documentation is available at:
+
+```
+/swagger-ui/index.html  # human-readable API endpoint docs
+/v3/api-docs            # JSON containing all available endpoints
+/v3/api-docs.yaml       # same as above in YAML format
 ```
 
-More about what errors return each api in ./TECHNICAL.md
-
+For more details on error responses for each endpoint, see [TECHNICAL.md](TECHNICAL.md).
