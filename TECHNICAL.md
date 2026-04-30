@@ -30,6 +30,7 @@
 ├── Dockerfile
 ├── docker-compose.yml
 ├── build.gradle
+├── tests/             # Bash scripts with tests
 ├── build_and_run.sh   # Builds images and starts containers
 ├── start.sh           # Starts existing containers
 ├── stop.sh            # Stops running containers
