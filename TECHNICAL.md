@@ -62,7 +62,6 @@ erDiagram
 
   stock ||--o{ wallets_content : "held in"
   wallet ||--o{ wallets_content : "contains"
-  wallet ||--o{ log : "has logs"
 ```
 
 ## Concurrency
