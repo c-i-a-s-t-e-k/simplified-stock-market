@@ -57,7 +57,7 @@ erDiagram
     string id PK
     string stock_name
     string type
-    string wallet_id FK
+    string wallet_id
   }
 
   stock ||--o{ wallets_content : "held in"
