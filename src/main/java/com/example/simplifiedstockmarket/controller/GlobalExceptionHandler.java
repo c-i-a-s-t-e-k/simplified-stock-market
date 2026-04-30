@@ -4,9 +4,13 @@ import com.example.simplifiedstockmarket.exeptions.InsufficientStockException;
 import com.example.simplifiedstockmarket.exeptions.StockInUseException;
 import com.example.simplifiedstockmarket.exeptions.StockNotFoundException;
 import com.example.simplifiedstockmarket.exeptions.WalletNotFoundException;
+import org.springframework.dao.PessimisticLockingFailureException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.TransactionSystemException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -29,6 +33,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(StockInUseException.class)
     public ResponseEntity<?> handleStockInUse(StockInUseException e){
         return ResponseEntity.badRequest().body(e.getMessage());
+    }
+
+    @ExceptionHandler(PessimisticLockingFailureException.class)
+    public ResponseEntity<?> handleLockingFailure(PessimisticLockingFailureException e) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body("Resource temporarily locked, retry the request");
     }
 }
 

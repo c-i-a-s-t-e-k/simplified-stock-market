@@ -59,6 +59,7 @@ public class WalletService {
         return new WalletsContent(0, wallet, stock);
     }
 
+    @Transactional
     public void executeOperationWithLog(OperationType type, String walletId, String stockName){
         executeOperation(type, walletId, stockName);
         auditService.addLog(type, walletId, stockName);

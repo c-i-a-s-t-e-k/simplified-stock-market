@@ -14,7 +14,7 @@ public interface StockRepository extends JpaRepository<Stock, String> {
     Optional<Stock> findByName(String name);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("SELECT b FROM BankStock b WHERE b.name = :name")
+    @Query("SELECT s FROM Stock s WHERE s.name = :name")
     Optional<Stock> findByNameWithLock(@Param("name") String name);
 
     @Modifying
@@ -23,7 +23,7 @@ public interface StockRepository extends JpaRepository<Stock, String> {
 
     @Modifying
     @Query(value = """
-        INSERT INTO stock (id, name, quantity_in_bank)\s
+        INSERT INTO Stock (id, name, quantity_in_bank)\s
         VALUES (gen_random_uuid(), :#{#stock.name}, :#{#stock.quantity_in_bank})
         ON CONFLICT (name) DO UPDATE\s
         SET quantity_in_bank = EXCLUDED.quantity_in_bank"""
@@ -31,6 +31,6 @@ public interface StockRepository extends JpaRepository<Stock, String> {
     void upsert(@Param("stock") Stock stock);
 
     @Modifying
-    @Query(value = "LOCK TABLE stock IN SHARE ROW EXCLUSIVE MODE", nativeQuery = true)
+    @Query(value = "LOCK TABLE Stock IN SHARE ROW EXCLUSIVE MODE", nativeQuery = true)
     void lockTable();
 }
