@@ -54,6 +54,8 @@ public class BankService {
 
     @Transactional
     public void setStatus(List<StockDto> status){
+        stockRepository.lockTable();
+        walletContentRepository.lockTable();
         walletContentRepository.clearWalletsContent();
         Set<Stock> newStatus = status
                         .stream()
@@ -77,14 +79,12 @@ public class BankService {
     }
 
     @Transactional
-    public void WalletOperation(String stockId, OperationType type){
-        Stock operativeStock = stockRepository.findById(stockId)
-                        .orElseThrow(() -> new EntityNotFoundException("Stock not found: " + stockId));
-        operativeStock.setQuantity_in_bank(
-                operativeStock.getQuantity_in_bank() + this.valueChangeByType(type)
+    public void WalletOperation(Stock stock, OperationType type){
+        stock.setQuantity_in_bank(
+                stock.getQuantity_in_bank() + this.valueChangeByType(type)
         );
-        if(operativeStock.getQuantity_in_bank() < 0) throw new InsufficientStockException("No stock in bank");
-        stockRepository.save(operativeStock);
+        if(stock.getQuantity_in_bank() < 0) throw new InsufficientStockException("No stock in bank");
+        stockRepository.save(stock);
     }
 
     public List<LogDto> getLogs(){

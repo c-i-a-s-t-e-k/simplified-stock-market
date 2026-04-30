@@ -49,12 +49,10 @@ public class WalletService {
         };
     }
 
-    @Transactional
-    private Wallet createWallet(String walletId){
-        Wallet newWallet = new Wallet();
-        newWallet.setId(walletId);
-        this.walletRepository.save(newWallet);
-        return newWallet;
+    private Wallet getOrCreateWallet(String walletId) {
+        walletRepository.insertIfNotExists(walletId);
+        return walletRepository.findById(walletId)
+                .orElseThrow(); // nigdy nie poleci bo właśnie wstawiliśmy
     }
 
     private WalletsContent newWalletContent(Wallet wallet, Stock stock){
@@ -67,17 +65,16 @@ public class WalletService {
     }
 
     @Transactional
-    private void executeOperation(OperationType type, String walletId, String stockName){
-        Wallet wallet = walletRepository.findById(walletId)
-                .orElse(this.createWallet(walletId));
-        Stock stock = stockRepository.findByName(stockName)
+    public void executeOperation(OperationType type, String walletId, String stockName){
+        Wallet wallet = getOrCreateWallet(walletId);
+        Stock stock = stockRepository.findByNameWithLock(stockName)
                 .orElseThrow(() -> new StockNotFoundException("Stock not found " + stockName));
 
         WalletsContent content = walletContentRepository.findById(new WalletsContentID(wallet, stock))
                 .orElse(newWalletContent(wallet, stock));
         content.setQuantity_in_wallet(content.getQuantity_in_wallet() + this.valueChangeByType(type));
         if(content.getQuantity_in_wallet() < 0) throw new InsufficientStockException("no stock in wallet");
-        bankService.WalletOperation(stock.getId(), type);
+        bankService.WalletOperation(stock, type);
 
         walletContentRepository.save(content);
     }

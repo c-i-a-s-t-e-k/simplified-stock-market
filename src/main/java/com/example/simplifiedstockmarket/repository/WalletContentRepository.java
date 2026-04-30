@@ -17,6 +17,10 @@ public interface WalletContentRepository extends JpaRepository<WalletsContent, W
     @Query("DELETE FROM WalletsContent wc WHERE wc.quantity_in_wallet = 0")
     void clearWalletsContent();
 
+    @Modifying
+    @Query(value = "LOCK TABLE wallet_content IN SHARE ROW EXCLUSIVE MODE", nativeQuery = true)
+    void lockTable();
+
     @Query("SELECT DISTINCT wc.stock FROM WalletsContent wc WHERE wc.quantity_in_wallet > 0")
     Set<Stock> findAllUsedStocks();
 }
