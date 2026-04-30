@@ -5,3 +5,6 @@ on POST /stocks
 
 on GET /Wallet
  * do not create new wallet if request ask of wallet_id that it never seen (404 error)
+
+on POST /chaos
+ * this endpoint will make app clean shutdown but will not remove/stop docker container
