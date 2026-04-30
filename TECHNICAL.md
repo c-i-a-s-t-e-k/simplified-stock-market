@@ -184,4 +184,23 @@ Returns the full audit log in order of occurrence. Only successful operations ar
 
 ### `POST /chaos`
 
-Kills the instance that serves this request. The container keeps running but the app inside stop running, simulating an instance failure for chaos testing purposes.
+Kills the instance that serves this request.
+
+---
+
+## Tests
+
+Tests are implemented as shell scripts that send `curl` requests to a running instance. The `run_tests.sh` script prepares a clean environment using `stop.sh` and `start.sh` before executing the suite.
+
+This approach was chosen because testing during development was done through Insomnia, an external HTTP client, so the test suite mirrors that workflow rather than using a Java testing framework.
+
+The suite covers happy-path flows, error cases, and two concurrency scenarios (`test_12` and `test_13`) that verify the system correctly rejects operations that would violate stock availability under parallel load.
+
+To run the tests:
+```bash
+chmod +x ./tests/run_tests.sh
+chmod +x ./build_and_run.sh
+
+./build_and_run.sh 8081 8082 8083
+./tests/run_tests.sh
+```
