@@ -20,7 +20,7 @@ jobs:
 
       - name: send curl
         run: | 
-          curl.exe -X POST http://localhost:8081/stocks -H "Content-Type: application/json" -d "{\"stocks\": [{\"name\":\"stock1\",\"quantity\":99}]}"
+          curl -X POST http://localhost:8081/stocks -H "Content-Type: application/json" -d "{\"stocks\": [{\"name\":\"stock1\",\"quantity\":99}]}"
           if ($LASTEXITCODE -ne 0) { exit 1 }
         shell: pwsh
 
