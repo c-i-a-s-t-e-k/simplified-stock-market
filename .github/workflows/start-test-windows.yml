@@ -1,11 +1,11 @@
-name: start-test-windows
+name: start-test-windows-powershell
 
 on:
   workflow_dispatch:
 
 jobs:
   start-test-windows:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - name: dowland code
         uses: actions/checkout@v4
