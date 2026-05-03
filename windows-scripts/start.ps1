@@ -1,22 +1,22 @@
 # start.ps1
-# Uruchamia zatrzymane kontenery
+# Starts stopped containers
 
-Write-Host "Uruchamianie kontenerów przez docker compose..." -ForegroundColor Cyan
+Write-Host "Starting containers via docker compose..." -ForegroundColor Cyan
 docker compose start
 
-# Uruchomienie zatrzymanych kontenerów stock-market-app
+# Start stopped stock-market-app containers
 $stoppedContainers = docker ps -a -q --filter "status=exited" --filter "ancestor=stock-market-app"
 
 if ($stoppedContainers) {
-    Write-Host "Uruchamianie zatrzymanych kontenerów stock-market-app..." -ForegroundColor Cyan
+    Write-Host "Starting stopped stock-market-app containers..." -ForegroundColor Cyan
     foreach ($containerId in $stoppedContainers) {
         docker start $containerId
         if ($LASTEXITCODE -eq 0) {
-            Write-Host "Kontener $containerId uruchomiony." -ForegroundColor Green
+            Write-Host "Container $containerId started." -ForegroundColor Green
         } else {
-            Write-Host "Błąd przy uruchamianiu kontenera $containerId." -ForegroundColor Red
+            Write-Host "Error: failed to start container $containerId." -ForegroundColor Red
         }
     }
 } else {
-    Write-Host "Brak zatrzymanych kontenerów stock-market-app." -ForegroundColor Yellow
+    Write-Host "No stopped stock-market-app containers found." -ForegroundColor Yellow
 }

@@ -1,22 +1,22 @@
 # remove.ps1
-# Usuwa kontenery i zasoby docker compose
+# Removes containers and docker compose resources
 
-Write-Host "Usuwanie kontenerów przez docker compose..." -ForegroundColor Cyan
+Write-Host "Removing containers via docker compose..." -ForegroundColor Cyan
 docker compose down
 
-# Usunięcie wszystkich kontenerów stock-market-app (również zatrzymanych)
+# Remove all stock-market-app containers (including stopped ones)
 $allContainers = docker ps -q -a --filter "ancestor=stock-market-app"
 
 if ($allContainers) {
-    Write-Host "Usuwanie kontenerów stock-market-app..." -ForegroundColor Cyan
+    Write-Host "Removing stock-market-app containers..." -ForegroundColor Cyan
     foreach ($containerId in $allContainers) {
         docker rm --force $containerId
         if ($LASTEXITCODE -eq 0) {
-            Write-Host "Kontener $containerId usunięty." -ForegroundColor Green
+            Write-Host "Container $containerId removed." -ForegroundColor Green
         } else {
-            Write-Host "Błąd przy usuwaniu kontenera $containerId." -ForegroundColor Red
+            Write-Host "Error: failed to remove container $containerId." -ForegroundColor Red
         }
     }
 } else {
-    Write-Host "Brak kontenerów stock-market-app do usunięcia." -ForegroundColor Yellow
+    Write-Host "No stock-market-app containers to remove." -ForegroundColor Yellow
 }

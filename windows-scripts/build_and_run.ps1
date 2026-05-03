@@ -1,51 +1,55 @@
 # build_and_run.ps1
-# Buduje obraz Docker i uruchamia kontenery aplikacji
-# Użycie: .\build_and_run.ps1 8081 8082 8083
+# Builds Docker image and starts application containers
+# Usage: .\build_and_run.ps1 8081 8082 8083
 
 param(
     [Parameter(ValueFromRemainingArguments = $true)]
     [string[]]$Ports
 )
 
-Write-Host "Budowanie obrazu stock-market-app..." -ForegroundColor Cyan
+# Build image
+Write-Host "Building stock-market-app image..." -ForegroundColor Cyan
 docker build -t stock-market-app .
 if ($LASTEXITCODE -ne 0) {
-    Write-Host "Błąd podczas budowania obrazu!" -ForegroundColor Red
+    Write-Host "Error: image build failed!" -ForegroundColor Red
     exit 1
 }
 
-Write-Host "Uruchamianie docker compose..." -ForegroundColor Cyan
+# Start docker compose
+Write-Host "Starting docker compose..." -ForegroundColor Cyan
 docker compose up -d
 if ($LASTEXITCODE -ne 0) {
-    Write-Host "Błąd podczas uruchamiania docker compose!" -ForegroundColor Red
+    Write-Host "Error: docker compose failed!" -ForegroundColor Red
     exit 1
 }
 
-Write-Host "Oczekiwanie na gotowość bazy danych..." -ForegroundColor Cyan
+# Wait for database to be healthy
+Write-Host "Waiting for database to be ready..." -ForegroundColor Cyan
 $I = 0
 $MAX = 300
 
 while ($true) {
     $status = docker inspect --format='{{.State.Health.Status}}' simplified-stock-market-db-1 2>$null
     if ($status -eq "healthy") {
-        Write-Host "Baza danych jest gotowa!" -ForegroundColor Green
+        Write-Host "Database is ready!" -ForegroundColor Green
         break
     }
     if ($I -ge $MAX) {
-        Write-Host "Baza danych nie uruchomiła się w czasie ${MAX}s — wyjście" -ForegroundColor Red
+        Write-Host "Error: database did not start within ${MAX}s -- exiting" -ForegroundColor Red
         exit 1
     }
     Start-Sleep -Seconds 1
     $I++
 }
 
+# Start application containers on given ports
 if ($Ports.Count -eq 0) {
-    Write-Host "Nie podano żadnych portów. Użycie: .\build_and_run.ps1 8081 8082 ..." -ForegroundColor Yellow
+    Write-Host "No ports provided. Usage: .\build_and_run.ps1 8081 8082 ..." -ForegroundColor Yellow
     exit 0
 }
 
 foreach ($Port in $Ports) {
-    Write-Host "Uruchamianie kontenera na porcie $Port..." -ForegroundColor Cyan
+    Write-Host "Starting container on port $Port..." -ForegroundColor Cyan
     docker run `
         -p "${Port}:8080" `
         --network="simplified-stock-market_default" `
@@ -57,8 +61,8 @@ foreach ($Port in $Ports) {
         -d `
         stock-market-app
     if ($LASTEXITCODE -ne 0) {
-        Write-Host "Błąd podczas uruchamiania kontenera na porcie $Port!" -ForegroundColor Red
+        Write-Host "Error: failed to start container on port $Port!" -ForegroundColor Red
     } else {
-        Write-Host "Kontener na porcie $Port uruchomiony pomyślnie." -ForegroundColor Green
+        Write-Host "Container on port $Port started successfully." -ForegroundColor Green
     }
 }
