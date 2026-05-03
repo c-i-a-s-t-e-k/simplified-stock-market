@@ -7,6 +7,11 @@ jobs:
   start-test-windows:
     runs-on: ubuntu-latest
     steps:
+      - name: Install PowerShell
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y powershell
+          
       - name: dowland code
         uses: actions/checkout@v4
 
