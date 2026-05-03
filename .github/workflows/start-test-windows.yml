@@ -1,0 +1,29 @@
+name: start-test-windows
+
+on:
+  workflow_dispatch:
+
+jobs:
+  start-test-windows:
+    runs-on: windows-latest
+    steps:
+      - name: dowland code
+        uses: actions/checkout@v4
+
+      - name: setup instances
+        run: ./windows-scripts/build_and_run.ps1 8081 8082 8083
+        shell: powershell
+
+      - name: wait for start
+        run: Start-Sleep -Seconds 60
+        shell: powershell
+
+      - name: send curl
+        run: | 
+          curl.exe -X POST http://localhost:8081/stocks -H "Content-Type: application/json" -d "{\"stocks\": [{\"name\":\"stock1\",\"quantity\":99}]}"
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+        shell: powershell
+
+      - name: remove
+        run: ./windows-scripts/remove.ps1
+        shell: powershell
